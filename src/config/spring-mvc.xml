@@ -1,0 +1,49 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<beans xmlns="http://www.springframework.org/schema/beans"
+	xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns:p="http://www.springframework.org/schema/p"
+	xmlns:mvc="http://www.springframework.org/schema/mvc" xmlns:context="http://www.springframework.org/schema/context"
+	xmlns:tx="http://www.springframework.org/schema/tx"
+	xsi:schemaLocation="http://www.springframework.org/schema/beans
+                    http://www.springframework.org/schema/beans/spring-beans-3.0.xsd
+                    http://www.springframework.org/schema/context
+                    http://www.springframework.org/schema/context/spring-context-3.0.xsd 
+                    http://www.springframework.org/schema/mvc
+                    http://www.springframework.org/schema/mvc/spring-mvc-3.0.xsd
+                        http://www.springframework.org/schema/tx
+        http://www.springframework.org/schema/tx/spring-tx-4.0.xsd">
+
+	<!-- 注解扫描包 -->
+	<context:component-scan base-package="com.zone.*" />
+
+	<!-- 事务注解 -->
+	<!-- 基于注释的事务，当注释中发现@Transactional时，使用id为“transactionManager”的事务管理器 -->
+	<!-- 如果没有设置transaction-manager的值，则spring以缺省默认的事务管理器来处理事务，默认事务管理器为第一个加载的事务管理器 
+		<tx:annotation-driven transaction-manager="transactionManager" proxy-target-class="true"/> -->
+
+
+	<!-- 开启注解 -->
+	<mvc:annotation-driven />
+
+	<!-- 静态资源(js/image)的访问 -->
+	<mvc:default-servlet-handler />
+	<!-- <mvc:resources location="/js/" mapping="/js/**"/> <mvc:resources location="/css/" 
+		mapping="/css/**"/> <mvc:resources location="/img/" mapping="/img/**"/> <mvc:resources 
+		location="/file/" mapping="/file/**"/> -->
+
+	<!-- 定义视图解析器 -->
+	<bean id="viewResolver"
+		class="org.springframework.web.servlet.view.InternalResourceViewResolver">
+		<property name="prefix" value="/jsp/"></property>
+		<property name="suffix" value=".jsp"></property>
+	</bean>
+
+	<!-- 定义拦截器，登录验证 -->
+	<mvc:interceptors>
+		<mvc:interceptor>
+			<!-- 拦截的地址 -->
+			<mvc:mapping path="/add*" />
+			<bean class="com.zone.controller.LoginController" />
+		</mvc:interceptor>
+	</mvc:interceptors>
+
+</beans>

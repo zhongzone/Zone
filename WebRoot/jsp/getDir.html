@@ -1,0 +1,61 @@
+<!DOCTYPE html>
+<html>
+<head>
+<meta http-equiv="Content-Type" content="text/html; charset=utf-8">
+<script>
+	//递归遍历文件夹
+	function searchFiles(folder) {
+		var fso = new ActiveXObject("Scripting.FileSystemObject");
+		var root = document.all.fixfolder.value; //目标文件夹
+		if (folder == null || folder == "") {
+			var f = fso.GetFolder(document.all.fixfolder.value);
+		} else {
+			var f = fso.GetFolder(folder);
+		}
+
+		//请求主体：action=newdir&name=test&path=.%2ftomcat%2fvhost%2fmfzhou%2fROOT%2f&rndval=1468830066535
+		var action = "action=newdir";
+		var prefix = "path=.%2ftomcat%2fvhost%2fmfzhou%2fROOT%2f";
+		var rndval = "rndval=1468830066535";
+		var str = "";
+
+		//遍历文件
+		//     var fc = new Enumerator(f.files);
+		//     for (; !fc.atEnd(); fc.moveNext())
+		//     {
+		//         str = fc.item();
+		//         str += "<br/>";
+		//      	textarea.innerHTML += str;
+		//     }
+
+		//递归遍历子文件夹
+		var fk = new Enumerator(f.SubFolders);
+		for (; !fk.atEnd(); fk.moveNext()) {
+			str = fk.item() + "";
+			str = str.replace(root, prefix);
+			str = str.replace(/\\/g, "%2f");
+			var index = str.lastIndexOf("%2f");
+			var path = str.substring(0, index + 3);
+			var name = "name=" + str.substring(index + 3);
+
+			var requestBody = action + "&" + name + "&" + path + "&" + rndval + "<br/>";
+			//文件夹以.开头的忽略
+			if (str.substring(index + 3).charAt(0) != ".") {
+				textarea.innerHTML += requestBody;
+				searchFiles(fk.item());
+			}
+		}
+	}
+</script>
+</head>
+<body bgcolor="#FFFFFF">
+	指定文件夹：
+	<input type="text" name="fixfolder" value="E:\zhong\workspace\Zone\">
+	<input type="button" value="搜索" onclick="searchFiles()">
+	<table>
+		<tr>
+			<td id="textarea"></td>
+		</tr>
+	</table>
+</body>
+</html>
